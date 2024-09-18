@@ -29,5 +29,17 @@
     <ClInclude Include="Ray.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Hittable.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Hittable_list.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

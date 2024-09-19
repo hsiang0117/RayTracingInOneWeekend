@@ -1,8 +1,6 @@
 #ifndef HITTABLE_HPP
 #define HITTABLE_HPP
 
-#include "Ray.hpp"
-
 class hit_record {
 public:
 	point3 p;
@@ -11,7 +9,7 @@ public:
 	bool front_face;
 
 	void set_face_normal(const ray& r, vec3& outward_normal) {
-		front_face = dot(r.direction(), outward_normal) > 0;
+		front_face = dot(r.direction(), outward_normal) < 0;
 		normal = front_face ? outward_normal : -outward_normal;
 	}
 };

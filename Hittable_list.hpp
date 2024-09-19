@@ -2,7 +2,6 @@
 #define HITTABLE_LIST_HPP
 
 #include"Hittable.hpp"
-#include<memory>
 #include<vector>
 
 class hittable_list : public hittable {

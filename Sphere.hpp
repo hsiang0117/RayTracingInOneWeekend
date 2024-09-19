@@ -5,7 +5,7 @@
 
 class sphere :public hittable {
 public:
-	sphere(point3& center, double radius) :center(center), radius(std::fmax(0,radius)) {}
+	sphere(const point3& center, double radius) :center(center), radius(std::fmax(0,radius)) {}
 	bool hit(const ray& r, double ray_tmin, double ray_tmax, hit_record& rec)const override {
 		vec3 oc = this->center - r.origin();
 		auto a = dot(r.direction(), r.direction());

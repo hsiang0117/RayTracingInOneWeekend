@@ -1,6 +1,8 @@
 #ifndef HITTABLE_HPP
 #define HITTABLE_HPP
 
+#include "Vec3.hpp"
+
 class hit_record {
 public:
 	point3 p;
@@ -17,7 +19,7 @@ public:
 class hittable {
 public:
 	virtual ~hittable() = default;
-	virtual bool hit(const ray& r, double ray_tmin, double ray_tmax, hit_record& rec) const = 0;
+	virtual bool hit(const ray& r, interval ray_t , hit_record& rec) const = 0;
 };
 
 #endif // !HITTABLE_HPP

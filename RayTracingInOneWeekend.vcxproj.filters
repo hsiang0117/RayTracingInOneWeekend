@@ -41,5 +41,11 @@
     <ClInclude Include="Utils.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Interval.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -108,6 +108,14 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <StackReserveSize>
+      </StackReserveSize>
+      <StackCommitSize>
+      </StackCommitSize>
+      <HeapReserveSize>
+      </HeapReserveSize>
+      <HeapCommitSize>
+      </HeapCommitSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,6 +143,7 @@
     <ClInclude Include="Hittable.hpp" />
     <ClInclude Include="Hittable_list.hpp" />
     <ClInclude Include="Interval.hpp" />
+    <ClInclude Include="Material.hpp" />
     <ClInclude Include="Ray.hpp" />
     <ClInclude Include="Sphere.hpp" />
     <ClInclude Include="Utils.hpp" />

@@ -41,6 +41,14 @@ public:
 	double length_squared() const {
 		return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 	}
+
+	static vec3 random() {
+		return vec3(random_double(), random_double(),random_double());
+	}
+
+	static vec3 random(double min, double max) {
+		return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
+	}
 };
 
 using point3 = vec3;
@@ -87,6 +95,25 @@ inline vec3 cross(const vec3& v, const vec3& u) {
 
 inline vec3 unit_vector(const vec3& v) {
 	return v / v.length();
+}
+
+inline vec3 random_unit_vector() {
+	while (true) {
+		auto random_vector = vec3::random(-1, 1);
+		if (1e-160 < random_vector.length_squared() && random_vector.length_squared() <= 1) {
+			return random_vector / sqrt(random_vector.length_squared());
+		}
+	}
+}
+
+inline vec3 random_on_hemisphere(const vec3& normal) {
+	vec3 unit_vector = random_unit_vector();
+	if (dot(unit_vector, normal) > 0.0) {
+		return unit_vector;
+	}
+	else {
+		return -unit_vector;
+	}
 }
 
 #endif // !VEC3_HPP

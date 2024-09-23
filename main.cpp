@@ -1,5 +1,4 @@
 #include "Utils.hpp"
-#include "Material.hpp"
 #include "Camera.hpp"
 #include "Hittable.hpp"
 #include "Hittable_list.hpp"

@@ -11,6 +11,9 @@ public:
 	int max_depth = 50;
 	double vfov = 90;
 
+	double focus_angle = 0;
+	double focus_distance = 10;
+
 	point3 center = point3(0, 0, 0);
 	vec3 lookat = vec3(0, 0, -1);
 	vec3 up = vec3(0, 1, 0);
@@ -46,15 +49,17 @@ private:
 	vec3 pixel_delta_v;
 	point3 pixel00_coord;
 
+	vec3 focus_disk_u;
+	vec3 focus_disk_v;
+
 	void initialize() {
 		image_height = image_width / aspect_ratio;
         image_height = (image_height < 1) ? 1 : image_height;
 		pixel_samples_scale = 1.0 / samples_per_pixel;
 
-		auto focal_length = (lookat - center).length();
 		auto theta = degrees_to_radians(vfov);
 		auto h = std::tan(theta / 2.0);
-		auto viewport_height = 2 * h * focal_length;
+		auto viewport_height = 2 * h * focus_distance;
 		auto viewport_width = viewport_height * (double(image_width) / image_height);
 
 		auto w = unit_vector(lookat - center);
@@ -66,8 +71,12 @@ private:
 		pixel_delta_u = viewport_u / image_width;
 		pixel_delta_v = viewport_v / image_height;
 
-		auto viewport_upper_left = lookat - viewport_u / 2 - viewport_v / 2;
+		auto viewport_upper_left = center + (focus_distance * w) - viewport_u / 2 - viewport_v / 2;
 		pixel00_coord = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
+
+		auto focus_radius = focus_distance * std::tan(degrees_to_radians(focus_angle / 2.0));
+		focus_disk_u = u * focus_radius;
+		focus_disk_v = v * focus_disk_v;
 	}
 
 	color ray_color(const ray& r, int depth, const hittable& world) const {
@@ -92,7 +101,7 @@ private:
 		auto pixel_sample = pixel00_coord
 			+ ((i + offset.x()) * pixel_delta_u)
 			+ ((j + offset.y()) * pixel_delta_v);
-		auto ray_origin = center;
+		auto ray_origin = focus_angle <= 0 ? center : get_sample_from_disk();
 		auto ray_direction = pixel_sample - ray_origin;
 
 		return ray(ray_origin, ray_direction);
@@ -100,6 +109,11 @@ private:
 
 	vec3 sample_square() const {
 		return vec3(random_double() - 0.5, random_double() - 0.5, 0);
+	}
+
+	point3 get_sample_from_disk() const {
+		auto p = random_in_unit_disk();
+		return center + p.x() * focus_disk_u + p.y() * focus_disk_v;
 	}
 };
 

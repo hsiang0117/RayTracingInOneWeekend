@@ -34,5 +34,8 @@ int main() {
     cam.lookat = point3(0, 0, -1);
     cam.up = vec3(0, 1, 0);
 
+    cam.focus_angle = 10;
+    cam.focus_distance = 3.4;
+
     cam.render(world);
 }

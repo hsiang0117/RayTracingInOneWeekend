@@ -1,7 +1,7 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
-#include "Hittable.hpp"
+#include "Material.hpp"
 
 class camera {
 public:
@@ -9,9 +9,14 @@ public:
 	int image_width = 400;
 	int samples_per_pixel = 100;
 	int max_depth = 50;
+	double vfov = 90;
+
+	point3 center = point3(0, 0, 0);
+	vec3 lookat = vec3(0, 0, -1);
+	vec3 up = vec3(0, 1, 0);
 
 	camera(){}
-	camera(double aspect_ratio, double image_width) :aspect_ratio(aspect_ratio), image_width(image_width) {}
+	camera(double aspect_ratio, double image_width, double vfov) :aspect_ratio(aspect_ratio), image_width(image_width), vfov(vfov) {}
 
 	void render(const hittable& world) {
 		initialize();
@@ -36,7 +41,6 @@ public:
 private:
 	int image_height;
 	double pixel_samples_scale;
-	point3 center = point3(0, 0, 0);
 
 	vec3 pixel_delta_u;
 	vec3 pixel_delta_v;
@@ -47,16 +51,22 @@ private:
         image_height = (image_height < 1) ? 1 : image_height;
 		pixel_samples_scale = 1.0 / samples_per_pixel;
 
-		double focal_length = 1.0;
-		double viewport_height = 2.0;
+		auto focal_length = (lookat - center).length();
+		auto theta = degrees_to_radians(vfov);
+		auto h = std::tan(theta / 2.0);
+		auto viewport_height = 2 * h * focal_length;
 		auto viewport_width = viewport_height * (double(image_width) / image_height);
-		auto viewport_u = vec3(viewport_width, 0, 0);
-		auto viewport_v = vec3(0, -viewport_height, 0);
+
+		auto w = unit_vector(lookat - center);
+		auto u = unit_vector(cross(w, up));
+		auto v = cross(u, w);
+		auto viewport_u = u * viewport_width;
+		auto viewport_v = -v * viewport_height;
 
 		pixel_delta_u = viewport_u / image_width;
 		pixel_delta_v = viewport_v / image_height;
 
-		auto viewport_upper_left = center - vec3(0, 0, focal_length) - viewport_u / 2 - viewport_v / 2;
+		auto viewport_upper_left = lookat - viewport_u / 2 - viewport_v / 2;
 		pixel00_coord = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 	}
 
@@ -65,8 +75,12 @@ private:
 		hit_record rec;
 		interval ray_t(0.001, infinity);
 		if (world.hit(r, ray_t, rec)) {
-			vec3 direction = rec.normal + random_unit_vector();
-			return 0.5 * ray_color(ray(rec.p, direction), depth - 1, world);
+			color attenuation;
+			ray scattered;
+			if (rec.mat->scatter(r, rec, attenuation, scattered)) {
+				return attenuation * ray_color(scattered, depth - 1, world);
+			}
+			return color(0, 0, 0);
 		}
 		vec3 unit_direction = unit_vector(r.direction());
 		auto a = 0.5 * (unit_direction.y() + 1.0);

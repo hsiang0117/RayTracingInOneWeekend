@@ -49,6 +49,11 @@ public:
 	static vec3 random(double min, double max) {
 		return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
 	}
+
+	bool near_zero()const {
+		auto s = 1e-8;
+		return std::fabs(e[0] < s) && std::fabs(e[1] < s) && std::fabs(e[2] < s);
+	}
 };
 
 using point3 = vec3;
@@ -85,11 +90,11 @@ inline double dot(const vec3& u, const vec3& v) {
 	return u.e[0] * v.e[0] + u.e[1] * v.e[1] + u.e[2] * v.e[2];
 }
 
-inline vec3 cross(const vec3& v, const vec3& u) {
+inline vec3 cross(const vec3& u, const vec3& v) {
 	return vec3(
 		u.e[1] * v.e[2] - u.e[2] * v.e[1],
-		u.e[1] * v.e[3] - u.e[3] * v.e[1],
-		u.e[2] * v.e[3] - u.e[3] * v.e[2]
+		u.e[2] * v.e[0] - u.e[0] * v.e[2],
+		u.e[0] * v.e[1] - u.e[1] * v.e[0]
 	);
 }
 
@@ -114,6 +119,17 @@ inline vec3 random_on_hemisphere(const vec3& normal) {
 	else {
 		return -unit_vector;
 	}
+}
+
+inline vec3 reflect(const vec3& v, const vec3& normal) {
+	return v - 2 * dot(v, normal) * normal;
+}
+
+inline vec3 refract(const vec3& v, const vec3& normal, const double etai_on_etat) {
+	auto cos_theta = std::fmin(dot(-v, normal), 1.0);
+	auto r_vertical = etai_on_etat * (v + cos_theta * normal);
+	auto r_parallel = -sqrt(fabs(1 - r_vertical.length_squared())) * normal;
+	return r_vertical + r_parallel;
 }
 
 #endif // !VEC3_HPP
